@@ -1,0 +1,3 @@
+def analzye_meal(meal):
+    # ... 
+    return meal
