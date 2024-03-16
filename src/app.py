@@ -1,4 +1,6 @@
 from models.meal_plan import MealPlan
+from models.dataset import Dataset
+from analyzers import random_meal_plan_generator
 def get_user_inputs():
     calorie_limit = input("Enter your calorie limit: ")
     budget = input("Enter your budget: ")
@@ -9,25 +11,26 @@ def get_user_inputs():
     
     return calorie_limit, budget, flavor_preferences, allergies, preparation_time, cooking_utensils
 
-def generate_meal_plan(calorie_limit, budget, flavor_preferences, allergies, preparation_time, cooking_utensils):
-    # Your logic to generate a meal plan goes here
-    # This could involve fetching recipes, calculating costs, and creating a grocery list
-    
-    # Return the generated meal plan, grocery list, and estimated cost
-    return MealPlan
 
 def main():
     # Get user inputs
-    calorie_limit, budget, flavor_preferences, allergies, preparation_time, cooking_utensils = get_user_inputs()
+    # calorie_limit, budget, flavor_preferences, allergies, preparation_time, cooking_utensils = get_user_inputs()
     
-    # Generate meal plan
-    meal_plan = generate_meal_plan(calorie_limit, budget, flavor_preferences, allergies, preparation_time, cooking_utensils)
-    
+    # preprocess data
+
+    dataset = Dataset()
+    dataset.create_recipes_from_csv(file_path="data/recipes/test_data.csv")
+
+    analyzer = random_meal_plan_generator.RandomMealPlanAnalyzer(dataset)
+    #generate 5 recipes for a meal plan
+    meal_plan = analyzer.generate_meal_plan(5)
+     
+  
     # Print the meal plan, grocery list, and estimated cost
     print("Meal Plan:")
-    print(meal_plan.recipes)
+    print(meal_plan.get_recipe_names())
     print("Grocery List:")
-    print(meal_plan.grocery_list)
+    print(meal_plan.grocery_list.get_ingredients())
     print("Estimated Cost: $", meal_plan.estimated_cost)
 
 if __name__ == "__main__":
