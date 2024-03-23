@@ -39,7 +39,7 @@ class user_input:
             #check to see if the thing is in the ingredients list
             inlist = False
             for item in self.ingredients:
-                if item == text.lower():
+                if item.lower() == text.lower():
                     #add the thing to the allergy list
                     self.allergies.append(text.lower())
                     inlist = True
@@ -62,7 +62,7 @@ class user_input:
                 # check to see if the thing is in the ingredients list
                 inlist = False
                 for item in self.ingredients:
-                    if item == text.lower():
+                    if item.lower() == text.lower():
                         # add the thing to the allergy list
                         self.allergies.append(text.lower())
                         inlist = True
