@@ -46,6 +46,7 @@ class user_input:
         # prompt the user to add additional
         while repeat:
             #display the current allergy list
+            print("")
             print("your allergies are " + str(self.allergies))
 
             #prompt user for additional allergies
@@ -54,12 +55,12 @@ class user_input:
             if text.lower() == "no":
                 repeat = False
             else:
-                # check to see if the thing is in the ingredients list
-                if self.Is_ingredient_present_in_list(text,self.ingredients):
+                # check to see if the thing is in the ingredients list and if we already have it
+                if self.Is_ingredient_present_in_list(text,self.ingredients) and not self.Is_ingredient_present_in_list(text,self.allergies):
                     #add the ingredient to the list.
                     self.allergies.append(text.lower())
                 else:
-                    print(text.lower() + " is not a ingredient in any of our recipes. we are not it appending to list")
+                    print(text.lower() + " is not a ingredient in any of our recipes or is already present. we are not it appending to list")
     
     #returns true if the if the ingredient is in the list
     def Is_ingredient_present_in_list(self, ingredient: str, list: List[str]):
