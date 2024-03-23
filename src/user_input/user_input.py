@@ -37,15 +37,10 @@ class user_input:
             repeat = False
         else:
             #check to see if the thing is in the ingredients list
-            inlist = False
-            for item in self.ingredients:
-                if item.lower() == text.lower():
-                    #add the thing to the allergy list
-                    self.allergies.append(text.lower())
-                    inlist = True
-                    #stop the for loop
-                    break
-            if not inlist:
+            if self.Is_ingredient_present_in_list(text,self.ingredients):
+                #add the ingredient to the list.
+                self.allergies.append(text.lower())
+            else:
                 print(text.lower() + " is not a ingredient in any of our recipes. we are not it appending to list")
 
         # prompt the user to add additional
@@ -54,22 +49,28 @@ class user_input:
             print("your allergies are " + str(self.allergies))
 
             #prompt user for additional allergies
-            text = input("what is another one of your food allergies? if none addition enter 'no': ")
+            text = input("what is another one of your food allergies? if none additional enter 'no': ")
             # check if the text is no
             if text.lower() == "no":
                 repeat = False
             else:
                 # check to see if the thing is in the ingredients list
-                inlist = False
-                for item in self.ingredients:
-                    if item.lower() == text.lower():
-                        # add the thing to the allergy list
-                        self.allergies.append(text.lower())
-                        inlist = True
-                        # stop the for loop
-                        break
-                if not inlist:
+                if self.Is_ingredient_present_in_list(text,self.ingredients):
+                    #add the ingredient to the list.
+                    self.allergies.append(text.lower())
+                else:
                     print(text.lower() + " is not a ingredient in any of our recipes. we are not it appending to list")
+    
+    #returns true if the if the ingredient is in the list
+    def Is_ingredient_present_in_list(self, ingredient: str, list: List[str]):
+            inlist = False
+            for item in list:
+                if item.lower() == ingredient.lower():
+                    inlist = True
+                    # stop the for loop
+                    break
+            return inlist
+
 
 def main():
     #for testing user interface.
