@@ -1,9 +1,11 @@
+from typing import List
+
 class user_input:
-    def __init__(self):
+    def __init__(self, ingredients_list: List[str]):
         self.allergies = []
         self.preferences = []
         #would theoretically come from a list of all recipies
-        self.ingredients = ["chicken","peanuts","milk"]
+        self.ingredients = ingredients_list
 
     def get_alergies(self):
         return self.allergies
