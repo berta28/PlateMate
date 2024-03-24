@@ -49,6 +49,9 @@ class Dataset:
             recipes.append(recipe)
         self.recipes = recipes
 
+        #create ingredient names list
+        self.ingredient_names = self.get_ingredient_names()
+
     def filter_by_allergies(self, allergies: List[str]):
         filtered_recipes = copy.copy(self.recipes)
         for recipe in self.recipes:
