@@ -12,7 +12,7 @@ class Dataset:
         self.recipes = recipes
         self.ingredients = ingredients
         self.meal_plans = meal_plans
-        self.ingredient_names = self.get_ingredient_names()
+        self.ingredient_names = []
 
     def get_recipe_by_title(self, title: str) -> Recipe:
         for recipe in self.recipes:
