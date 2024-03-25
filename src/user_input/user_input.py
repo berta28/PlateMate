@@ -15,7 +15,7 @@ class user_input:
 
     def get_user_inputs(self):
         self.get_user_allergies()
-        self.get_user_preferences
+        self.get_user_preferences()
 
     #todo: add functionality to ensure that preferences cannot be allergies
     def get_user_preferences(self):
@@ -24,7 +24,16 @@ class user_input:
         repeat = True
 
         #handle first case
-        text = input("do you have any preferences? if none enter 'no'")
+        text = input("do you have any preferences? if none enter 'no': ")
+        
+        #check if the text is no
+        if text.lower() == "no":
+            repeat = False
+        else:
+            #check if the ingredient is in the list
+            if self.Is_ingredient_present_in_list(text,self.ingredients):
+                #add the preference to the list
+                self.preferences.append(text.lower())
 
     def get_user_allergies(self):
         # reset the allergies
