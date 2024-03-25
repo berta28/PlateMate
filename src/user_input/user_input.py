@@ -24,7 +24,7 @@ class user_input:
         repeat = True
 
         #handle first case
-        text = input("do you have any preferences? if none enter 'no': ")
+        text = input("do you have any ingredient preferences? if none enter 'no': ")
         
         #check if the text is no
         if text.lower() == "no":
@@ -32,8 +32,37 @@ class user_input:
         else:
             #check if the ingredient is in the list
             if self.Is_ingredient_present_in_list(text,self.ingredients):
-                #add the preference to the list
-                self.preferences.append(text.lower())
+                #reject preferences that are allergies
+                if not self.Is_ingredient_present_in_list(text,self.allergies):
+                    #add the preference to the list
+                    self.preferences.append(text.lower())
+                else:
+                    print(text.lower() + " is one of your allergies. Not adding to preferences")
+            else:
+                print(text.lower() + " is not one of the ingredients in any of our recipes. Not adding to preferences")
+        
+        #get all the other preferences.
+        while repeat:
+            #display current preference list
+            print("")
+            print("your preferences are: " + str(self.preferences))
+            
+            #get other preferences
+            text = input("do you have any additional preferences? if none enter 'no': ")
+            if text.lower() == "no":
+                repeat = False
+            else:
+                #check that it is a ingredient and not a duplicate
+                if self.Is_ingredient_present_in_list(text,self.ingredients) and not self.Is_ingredient_present_in_list(text,self.preferences):
+                    #check that the ingredient is not a allergy
+                    if not self.Is_ingredient_present_in_list(text,self.allergies):
+                        #add the thing to the preferences
+                        self.preferences.append(text.lower())
+                    else:
+                        print(text.lower() + " is one of your allergies. Not adding to preferences")
+                else:
+                    print(text.lower() + " is not a ingredient in any of our recipes or is already present. we are not it appending to list")
+
 
     def get_user_allergies(self):
         # reset the allergies
