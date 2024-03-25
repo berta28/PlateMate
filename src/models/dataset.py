@@ -12,7 +12,7 @@ class Dataset:
         self.recipes = recipes
         self.ingredients = ingredients
         self.meal_plans = meal_plans
-        self.ingredient_names = self.get_ingredient_names()
+        self.ingredient_names = []
 
     def get_recipe_by_title(self, title: str) -> Recipe:
         for recipe in self.recipes:
@@ -48,6 +48,9 @@ class Dataset:
             recipe = Recipe(recipe_number, title, ingredients, directions, link, source, NER)
             recipes.append(recipe)
         self.recipes = recipes
+
+        #create ingredient names list
+        self.ingredient_names = self.get_ingredient_names()
 
     def filter_by_allergies(self, allergies: List[str]):
         filtered_recipes = copy.copy(self.recipes)
