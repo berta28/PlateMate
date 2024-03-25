@@ -1,6 +1,8 @@
 from models.meal_plan import MealPlan
 from models.dataset import Dataset
 from analyzers import random_meal_plan_generator
+from user_input.user_input import user_input
+
 def get_user_inputs():
     calorie_limit = input("Enter your calorie limit: ")
     budget = input("Enter your budget: ")
@@ -20,6 +22,14 @@ def main():
 
     dataset = Dataset()
     dataset.create_recipes_from_csv(file_path="data/recipes/test_data.csv")
+
+    #get the user
+    user = user_input(dataset.get_ingredient_names())
+    user.get_user_inputs()
+
+    #print out the inputs from the user
+    print(user.allergies)
+    print(user.preferences)
 
     analyzer = random_meal_plan_generator.RandomMealPlanAnalyzer(dataset)
     #generate 5 recipes for a meal plan
