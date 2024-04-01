@@ -5,6 +5,8 @@ import pandas as pd
 from typing import List
 import ast
 import copy
+import numpy as np
+from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
 
 class Dataset:
     def __init__(self, recipes: List[Recipe] = None, ingredients: List[Ingredient]=None, meal_plans: List[MealPlan]=None):
@@ -68,6 +70,19 @@ class Dataset:
                 if ingredient not in ingredient_names:
                     ingredient_names.append(ingredient)
         return ingredient_names
+
+    def get_input_shape(self):
+        max_sequence_length = max(len(recipe.NER) for recipe in self.recipes)
+        return (max_sequence_length, len(self.ingredient_names))
+
+    def get_num_categories(self):
+        return len(self.ingredient_names)
+    
+    def preprocess_data(self,encoder = OneHotEncoder(sparse=False),scaler = MinMaxScaler()):
+        encoded_ingredients = encoder.fit_transform([[ingredient] for recipe in self.recipes for ingredient in recipe.NER])
+        # Convert preprocessed data to numpy array
+        return np.array(encoded_ingredients)
+
 
 class IngredientsDataset:
     def __init__(self, ingredients: List[Ingredient] = None):

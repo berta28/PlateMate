@@ -1,5 +1,7 @@
 from typing import List
-
+import random
+import numpy as np
+from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
 
 
 class Vitamin:
@@ -32,6 +34,16 @@ class Recipe:
         #ingredients list contains measure values.
         #TODO find way to better exact measure values
         self.NER = NER
+
+    def to_numerical_representation(self, encoder=OneHotEncoder(sparse=False), scaler=MinMaxScaler()):
+        # One-hot encode ingredients
+        encoded_ingredients = encoder.transform([[ingredient] for ingredient in self.NER])
+        # Normalize calories
+        normalized_calories = scaler.transform([[self.calories]])
+        # Combine categorical and numerical representations
+        numerical_representation = np.concatenate([encoded_ingredients[0], normalized_calories[0]])
+        return numerical_representation
+
 
 class GroceryList:
     def __init__(self, ingredients: List[Ingredient] = None, estimated_cost: int = None):
