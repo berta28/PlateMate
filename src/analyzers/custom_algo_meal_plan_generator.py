@@ -68,7 +68,22 @@ class customAlgoMealPlanGenerator:
         print(max_score_index)
         print(max_score)
 
-        #get the recipes within the 
+        print("getting desireable plans")
+        #get the recipes plans within the threshold and add them to a desired list
+        desiredPlans = []
+        for index in range(len(scores)):
+            if scores[index] + self.less_than_best_offset >= max_score:
+                desiredPlans.append(plans[index])
+                #print(index)
+                #print(scores[index])
+                #print("")
+        
+        print("selecting Recipe plan")
+        if amount == 1:
+            recipes = desiredPlans[random.randrange(0,len(desiredPlans))]
+            grocery_list = GroceryList().from_recipes(recipes)
+            estimated_cost = grocery_list.estimated_cost
+            return MealPlan(recipes, grocery_list, estimated_cost)
             
 
 
