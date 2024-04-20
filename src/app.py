@@ -33,7 +33,7 @@ def main():
 
     analyzer = custom_algo_meal_plan_generator.customAlgoMealPlanGenerator(dataset, user)
 
-    random_meal_plan_generator = analyzer.generate_meal_plan(1)
+    meal_plan = analyzer.generate_meal_plan(1)
 
     #analyzer = random_meal_plan_generator.RandomMealPlanAnalyzer(dataset)
     #generate 5 recipes for a meal plan
