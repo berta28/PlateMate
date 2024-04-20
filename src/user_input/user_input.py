@@ -14,6 +14,7 @@ class user_input:
         return self.preferences
 
     def get_user_inputs(self):
+        print(self.ingredients)
         self.get_user_allergies()
         self.get_user_preferences()
 
