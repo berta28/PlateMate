@@ -27,14 +27,7 @@ class customAlgoMealPlanGenerator:
                     plans.append([recipe1, recipe2, recipe3])
         return plans
 
-    #ammount corosponds to days where each day has 3 meals.
-    def generate_meal_plan(self, amount: int):
-        print("making all possible plans")
-        #make a list of all combonations of 3 item lists in our dataset
-        plans = self.generate_all_plans()
-
-        print("scoring recipes")
-        #score all the meal plans
+    def score_plans(self, plans):
         scores = []
         for mealPlan in plans:
             #add points for preferences
@@ -51,6 +44,20 @@ class customAlgoMealPlanGenerator:
             
             #add in a score for the recipe
             scores.append(0 + preference_score)
+        return scores
+
+
+
+    #ammount corosponds to days where each day has 3 meals.
+    def generate_meal_plan(self, amount: int):
+        print("making all possible plans")
+        #make a list of all combonations of 3 item lists in our dataset
+        plans = self.generate_all_plans()
+
+        print("scoring recipes")
+        #score all the meal plans
+        scores = self.score_plans(plans)
+
         #print(scores)
         
         print("finding max score")
