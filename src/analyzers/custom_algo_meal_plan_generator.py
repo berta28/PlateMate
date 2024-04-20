@@ -17,20 +17,21 @@ class customAlgoMealPlanGenerator:
     def remove_allergies(self, dataset: Dataset, user: user_input):
         dataset.recipes = dataset.filter_by_allergies(user.allergies)
         return dataset
-
-    #ammount corosponds to days where each day has 3 meals.
-    def generate_meal_plan(self, amount: int):
-        print("hello world")
-
+    
+    def generate_all_plans(self):
         plans = []
-        #make a list of all combonations of 3 item lists in our dataset
-
         #add all the recipes to the plan list as list.
         for recipe1 in self.dataset.recipes:
             for recipe2 in self.dataset.recipes:
                 for recipe3 in self.dataset.recipes:
                     plans.append([recipe1, recipe2, recipe3])
+        return plans
 
+    #ammount corosponds to days where each day has 3 meals.
+    def generate_meal_plan(self, amount: int):
+        print("making all possible plans")
+        #make a list of all combonations of 3 item lists in our dataset
+        plans = self.generate_all_plans()
 
         print("scoring recipes")
         #score all the meal plans
