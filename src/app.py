@@ -21,7 +21,7 @@ def main():
     # preprocess data
 
     dataset = Dataset()
-    dataset.create_recipes_from_csv(file_path="data/recipes/test_data.csv")
+    dataset.create_recipes_from_csv(file_location="data/recipes/full.json")
 
     #get the user
     user = user_input(dataset.get_ingredient_names())
