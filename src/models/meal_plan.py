@@ -23,7 +23,7 @@ class Ingredient:
         self.cost_per_weight = .5
 
 class Recipe:
-    def __init__(self, recipe_number=None, title=None, ingredients=None, directions=None, link=None, source=None, NER=None):
+    def __init__(self, recipe_number=None, title=None, ingredients=None, directions=None, link=None, source=None, NER=None, nutrient_values=None):
         self.recipe_number = recipe_number
         self.title = title
         self.ingredients = ingredients
@@ -34,6 +34,10 @@ class Recipe:
         #ingredients list contains measure values.
         #TODO find way to better exact measure values
         self.NER = NER
+        self.nutrient_values = nutrient_values
+
+    def get_nutrient_values(self):
+        return self.nutrient_values
 
     def to_numerical_representation(self, encoder=OneHotEncoder(sparse=False), scaler=MinMaxScaler()):
         # One-hot encode ingredients
