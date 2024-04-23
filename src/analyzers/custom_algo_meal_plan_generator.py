@@ -64,7 +64,7 @@ class customAlgoMealPlanGenerator:
         #get max score
         max_score = scores[0]
         max_score_index = 0
-        print(len(scores))
+        print("number of scores: " + str(len(scores)))
 
         for index in range(len(scores)):
             score = scores[index]
@@ -73,8 +73,8 @@ class customAlgoMealPlanGenerator:
                 max_score = score
                 #print("new best")
                 #print(max_score)
-        print(max_score_index)
-        print(max_score)
+        print("max score index: " + str(max_score_index))
+        print("max score: " + str(max_score))
 
         print("getting desireable plans")
         #get the recipes plans within the threshold and add them to a desired list
