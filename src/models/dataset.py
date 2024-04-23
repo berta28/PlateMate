@@ -5,6 +5,11 @@ import pandas as pd
 from typing import List
 import ast
 import copy
+import numpy as np
+from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
+import os
+import json
+import requests
 
 class Dataset:
     def __init__(self, recipes: List[Recipe] = None, ingredients: List[Ingredient]=None, meal_plans: List[MealPlan]=None):
@@ -13,7 +18,7 @@ class Dataset:
         self.ingredients = ingredients
         self.meal_plans = meal_plans
         self.ingredient_names = []
-
+    
     def get_recipe_by_title(self, title: str) -> Recipe:
         for recipe in self.recipes:
             if recipe.title == title:
@@ -32,21 +37,33 @@ class Dataset:
                 return meal_plan
         return None
     
-    def create_recipes_from_csv(self, file_path: str="data/recipes/full_dataset.csv"):
+    def create_recipes_from_csv(self, file_location: str="data/recipes/full_dataset.csv"):
         recipes = []
-        df = pd.read_csv(file_path, delimiter=',', encoding='utf-8')
-        for index, row in df.iterrows():
-            recipe_number = 0
-            title = row['title']
-            #converts string to list
-            ingredients = ast.literal_eval(row['ingredients'])
-            directions = row['directions']
-            link = row['link']
-            source = row['source']
-            NER = ast.literal_eval(row['NER'])
+        if not os.path.exists(file_location):
+            response = requests.get('https://data.csail.mit.edu/im2recipe/recipes_with_nutritional_info.json')
+            # Write the downloaded content to a file
+            with open(file_location, 'w') as f:
+                f.write(response.text)
+        
+        # Load the data from the file
+        with open(file_location, 'r') as f:
+            data = json.load(f)
+            f.close()
+        dataset = pd.DataFrame(data)
+    
+        dataset["total_nutr_values"] = [{} for _ in range(len(dataset))]
+        # Calculate total nutrient values
+        for index, nutrients in dataset["nutr_values_per100g"].items():
+            total_nutr_values = sum(dataset["weight_per_ingr"][index])
+            for nutrient_name, value in nutrients.items():
+                dataset["total_nutr_values"][index][nutrient_name] = int(value * total_nutr_values / 100)
+        self.dataset = dataset
+
+        for index, row in dataset.iterrows():
             #TODO links to ingredients
-            recipe = Recipe(recipe_number, title, ingredients, directions, link, source, NER)
+            recipe = Recipe(index, row.title, row.ingredients, row.instructions, row.url, '____', [ing['text'] for ing in row.ingredients])
             recipes.append(recipe)
+
         self.recipes = recipes
 
         #create ingredient names list
@@ -68,6 +85,19 @@ class Dataset:
                 if ingredient not in ingredient_names:
                     ingredient_names.append(ingredient)
         return ingredient_names
+
+    def get_input_shape(self):
+        max_sequence_length = max(len(recipe.NER) for recipe in self.recipes)
+        return (max_sequence_length, len(self.ingredient_names))
+
+    def get_num_categories(self):
+        return len(self.ingredient_names)
+    
+    def preprocess_data(self,encoder = OneHotEncoder(sparse=False),scaler = MinMaxScaler()):
+        encoded_ingredients = encoder.fit_transform([[ingredient] for recipe in self.recipes for ingredient in recipe.NER])
+        # Convert preprocessed data to numpy array
+        return np.array(encoded_ingredients)
+
 
 class IngredientsDataset:
     def __init__(self, ingredients: List[Ingredient] = None):
