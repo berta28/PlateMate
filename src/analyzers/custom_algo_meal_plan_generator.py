@@ -1,11 +1,25 @@
-from models.meal_plan import MealPlan, GroceryList
+from models.meal_plan import MealPlan, GroceryList, Recipe
 from models.dataset import Dataset
 from user_input.user_input import user_input
 import random
+import concurrent.futures
+import time
+import numpy as np
+
+class internalMealPlan():
+    def __init__(self, index : int, mealList:list):
+        self.index = index
+        self.mealList = mealList
 
 class customAlgoMealPlanGenerator:
+    max_thread_workers = 24 #number of threads to spawn during multithreaded processies
+
     pref_weight = 1 #how much preference plays into the thing
     less_than_best_offset = 1 # how much lower off the best score do we want to add to the random selection pool
+
+    norm_energy_score = 20000
+    max_energy_deviation = 2000 #max calories off before we start taking away points from meal plan
+    energy_score_weight = -1 #how much the energy score influences the score. should always be a negative number
 
     def __init__(self, dataset : Dataset, user : user_input):
         self.dataset = dataset
@@ -20,31 +34,83 @@ class customAlgoMealPlanGenerator:
     
     def generate_all_plans(self):
         plans = []
+        index = 0
         #add all the recipes to the plan list as list.
         for recipe1 in self.dataset.recipes:
             for recipe2 in self.dataset.recipes:
                 for recipe3 in self.dataset.recipes:
-                    plans.append([recipe1, recipe2, recipe3])
+                    plans.append(internalMealPlan(index, [recipe1, recipe2, recipe3]))
+                    index = index + 1
         return plans
 
     def score_plans(self, plans):
-        scores = []
-        for mealPlan in plans:
-            #add points for preferences
-            preference_score = 0
-            for recipe in mealPlan:
-                #go through all the preferences
-                for preference in self.user.preferences:
-                    #go through each of the ingredients in a recipe
-                    for ingredient in recipe.NER:
-                        if ingredient.lower() == preference.lower():
-                            preference_score = preference_score + self.pref_weight
-                            #print("found a recipe")
+        #create global varible to return the dictionary of data keyed by index of the meal plan.
+        self.scores = {}
+        self.thread = 0
 
-            
-            #add in a score for the recipe
-            scores.append(0 + preference_score)
-        return scores
+        # print(time.gmtime())
+        #single threaded
+        #self.score_plans_helper(plans)
+
+        # print(time.gmtime())
+
+        #multi threaded
+        #split the plans with each thread responsible for 1,000,000 entries
+        print("splitting scoring workload")
+        plansList = np.array_split(plans, len(plans)/1000000)
+        print("preforming scoring")
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_thread_workers) as executor:
+              executor.map(self.score_plans_helper, plansList)
+
+        # print(time.gmtime())
+        
+        return self.scores
+    
+    def score_plans_helper(self, plans):
+        print("running thread: " + str(self.thread))
+        self.thread = self.thread + 1
+        for index in range(len(plans)):
+            mealList = plans[index]
+            self.score_plan(mealList)
+    
+    #scores induvidual plans
+    def score_plan(self, plan: internalMealPlan):
+        #add points for preferences
+        mealPlan = plan.mealList
+        index = plan.index
+        #print("scoring plan: " + str(index))
+        preference_score = 0
+        for recipe in mealPlan:
+            #go through all the preferences
+            for preference in self.user.preferences:
+                #go through each of the ingredients in a recipe
+                for ingredient in recipe.NER:
+                    if ingredient.lower() == preference.lower():
+                        preference_score = preference_score + self.pref_weight
+                        #print("found a recipe")
+
+        #add points for total calories.
+        energy_score = 0
+        #add up the total amount of energy
+        total_energy = 0
+        for recipe in mealPlan:
+            total_energy = total_energy + recipe.get_nutrient_values().get('energy')
+        
+        #if it is out of bounds
+        if(total_energy > self.norm_energy_score + self.max_energy_deviation):
+            energy_score = (total_energy - (self.norm_energy_score + self.max_energy_deviation)) * self.energy_score_weight
+        elif(total_energy < self.norm_energy_score - self.max_energy_deviation):
+            energy_score = ((self.norm_energy_score - self.max_energy_deviation) - total_energy ) * self.energy_score_weight
+        else:
+            energy_score = 0
+        
+        #print("total energy: " + str(total_energy))
+        #print("energy score: " + str(energy_score))
+
+        #add in a score for the recipe
+        #return preference_score + energy_score
+        self.scores[index] = preference_score + energy_score
+
 
 
 
@@ -66,7 +132,7 @@ class customAlgoMealPlanGenerator:
         max_score_index = 0
         print("number of scores: " + str(len(scores)))
 
-        for index in range(len(scores)):
+        for index in range(len(plans)):
             score = scores[index]
             if score > max_score:
                 max_score_index = index
@@ -88,10 +154,12 @@ class customAlgoMealPlanGenerator:
         
         print("selecting Recipe plan")
         if amount == 1:
-            recipes = desiredPlans[random.randrange(0,len(desiredPlans))]
+            recipes = desiredPlans[random.randrange(0,len(desiredPlans))].mealList
             grocery_list = GroceryList().from_recipes(recipes)
             estimated_cost = grocery_list.estimated_cost
             return MealPlan(recipes, grocery_list, estimated_cost)
+        
+
             
 
 
