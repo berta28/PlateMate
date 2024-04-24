@@ -1,6 +1,6 @@
 from models.meal_plan import MealPlan
 from models.dataset import Dataset
-from analyzers import random_meal_plan_generator
+from analyzers import random_meal_plan_generator, custom_algo_meal_plan_generator
 from user_input.user_input import user_input
 
 def get_user_inputs():
@@ -31,9 +31,13 @@ def main():
     print(user.allergies)
     print(user.preferences)
 
-    analyzer = random_meal_plan_generator.RandomMealPlanAnalyzer(dataset)
+    analyzer = custom_algo_meal_plan_generator.customAlgoMealPlanGenerator(dataset, user)
+
+    meal_plan = analyzer.generate_meal_plan(1)
+
+    #analyzer = random_meal_plan_generator.RandomMealPlanAnalyzer(dataset)
     #generate 5 recipes for a meal plan
-    meal_plan = analyzer.generate_meal_plan(5)
+    #meal_plan = analyzer.generate_meal_plan(5)
      
   
     # Print the meal plan, grocery list, and estimated cost
