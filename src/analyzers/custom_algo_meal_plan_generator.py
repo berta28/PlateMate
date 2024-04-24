@@ -5,6 +5,7 @@ import random
 import concurrent.futures
 import time
 import numpy as np
+import math
 
 class internalMealPlan():
     def __init__(self, index : int, mealList:list):
@@ -13,6 +14,7 @@ class internalMealPlan():
 
 class customAlgoMealPlanGenerator:
     max_thread_workers = 24 #number of threads to spawn during multithreaded processies
+    max_list_size = 100000 #length of lists before splitting
 
     pref_weight = 1 #how much preference plays into the thing
     less_than_best_offset = 1 # how much lower off the best score do we want to add to the random selection pool
@@ -50,17 +52,18 @@ class customAlgoMealPlanGenerator:
 
         # print(time.gmtime())
         #single threaded
-        #self.score_plans_helper(plans)
+        self.scores.update(self.score_plans_helper(plans))
 
         # print(time.gmtime())
 
         #multi threaded
         #split the plans with each thread responsible for 1,000,000 entries
-        print("splitting scoring workload")
-        plansList = np.array_split(plans, len(plans)/1000000)
-        print("preforming scoring")
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_thread_workers) as executor:
-              executor.map(self.score_plans_helper, plansList)
+        # print("splitting scoring workload")
+        # plansList = np.array_split(plans, math.ceil(len(plans)/self.max_list_size))
+        # print("preforming scoring")
+        # pool = concurrent.futures.ThreadPoolExecutor(max_workers=self.max_thread_workers)
+        # for result in pool.map(self.score_plans_helper, plansList):
+        #     self.scores.update(result)
 
         # print(time.gmtime())
         
@@ -69,9 +72,11 @@ class customAlgoMealPlanGenerator:
     def score_plans_helper(self, plans):
         print("running thread: " + str(self.thread))
         self.thread = self.thread + 1
+        result_list = {}
         for index in range(len(plans)):
             mealList = plans[index]
-            self.score_plan(mealList)
+            result_list[mealList.index] = self.score_plan(mealList)
+        return result_list
     
     #scores induvidual plans
     def score_plan(self, plan: internalMealPlan):
@@ -108,17 +113,19 @@ class customAlgoMealPlanGenerator:
         #print("energy score: " + str(energy_score))
 
         #add in a score for the recipe
-        #return preference_score + energy_score
-        self.scores[index] = preference_score + energy_score
+        return preference_score + energy_score
+        #self.scores[index] = preference_score + energy_score
 
 
 
 
     #ammount corosponds to days where each day has 3 meals.
     def generate_meal_plan(self, amount: int):
+        print("number of recipes: " + str(len(self.dataset.recipes)))
         print("making all possible plans")
         #make a list of all combonations of 3 item lists in our dataset
         plans = self.generate_all_plans()
+        print("number of plans: " + str(len(plans)))
 
         print("scoring recipes")
         #score all the meal plans
@@ -130,6 +137,7 @@ class customAlgoMealPlanGenerator:
         #get max score
         max_score = scores[0]
         max_score_index = 0
+        print("number of plans: " + str(len(plans)))
         print("number of scores: " + str(len(scores)))
 
         for index in range(len(plans)):
