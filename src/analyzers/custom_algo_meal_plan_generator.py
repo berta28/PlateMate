@@ -70,22 +70,23 @@ class customAlgoMealPlanGenerator:
         self.scores = {}
         self.thread = 0
 
-        # print(time.gmtime())
-        #single threaded
-        self.scores.update(self.score_plans_helper(plans))
 
-        # print(time.gmtime())
+        #determine whether or not to run in single or multithreaded mode
+        if len(plans)/self.max_list_size <= 1:
+            #single threaded
+            self.scores.update(self.score_plans_helper(plans))
 
+        else:
         #multi threaded
-        #split the plans with each thread responsible fir
-        # print("splitting scoring workload")
-        # plansList = np.array_split(plans, math.ceil(len(plans)/self.max_list_size))
-        # print("preforming scoring")
-        # pool = concurrent.futures.ThreadPoolExecutor(max_workers=self.max_thread_workers)
-        # for result in pool.map(self.score_plans_helper, plansList):
-        #     self.scores.update(result)
+        #split the plans with each thread responsible for
+            print("splitting scoring workload")
+            plansList = np.array_split(plans, math.ceil(len(plans)/self.max_list_size))
+            print("preforming scoring")
+            pool = concurrent.futures.ThreadPoolExecutor(max_workers=self.max_thread_workers)
+            for result in pool.map(self.score_plans_helper, plansList):
+                self.scores.update(result)
 
-        # print(time.gmtime())
+
         
         return self.scores
     
