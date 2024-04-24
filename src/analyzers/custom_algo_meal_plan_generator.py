@@ -23,6 +23,26 @@ class customAlgoMealPlanGenerator:
     max_energy_deviation = 2000 #max calories off before we start taking away points from meal plan
     energy_score_weight = -1 #how much the energy score influences the score. should always be a negative number
 
+    norm_fat_score = 300
+    max_fat_deviation = 20
+    fat_score_weight = -0.5
+
+    norm_protein_score = 50
+    max_protein_deviation = 5
+    protein_score_weight = -1
+
+    norm_salt_score = 2.3
+    max_salt_deviation = 0.1
+    salt_score_weight = -0.5
+
+    norm_saturates_score = 20
+    max_saturates_deviation = 3
+    saturates_score_weight = -0.5
+
+    norm_sugars_score = 50
+    max_sugars_deviation = 10
+    sugars_score_weight = -0.5
+
     def __init__(self, dataset : Dataset, user : user_input):
         self.dataset = dataset
         self.user = user
@@ -57,7 +77,7 @@ class customAlgoMealPlanGenerator:
         # print(time.gmtime())
 
         #multi threaded
-        #split the plans with each thread responsible for 1,000,000 entries
+        #split the plans with each thread responsible fir
         # print("splitting scoring workload")
         # plansList = np.array_split(plans, math.ceil(len(plans)/self.max_list_size))
         # print("preforming scoring")
@@ -96,25 +116,56 @@ class customAlgoMealPlanGenerator:
 
         #add points for total calories.
         energy_score = 0
-        #add up the total amount of energy
+        #sum nutritional values
         total_energy = 0
+        total_fat = 0
+        total_protein = 0
+        total_salt = 0
+        total_saturates = 0
+        total_sugars = 0
         for recipe in mealPlan:
             total_energy = total_energy + recipe.get_nutrient_values().get('energy')
-        
-        #if it is out of bounds
-        if(total_energy > self.norm_energy_score + self.max_energy_deviation):
-            energy_score = (total_energy - (self.norm_energy_score + self.max_energy_deviation)) * self.energy_score_weight
-        elif(total_energy < self.norm_energy_score - self.max_energy_deviation):
-            energy_score = ((self.norm_energy_score - self.max_energy_deviation) - total_energy ) * self.energy_score_weight
-        else:
-            energy_score = 0
+            total_fat = total_fat + recipe.get_nutrient_values().get('fat')
+            total_protein = total_protein + recipe.get_nutrient_values().get('protein')
+            total_salt = total_salt + recipe.get_nutrient_values().get('salt')
+            total_saturates = total_saturates + recipe.get_nutrient_values().get('saturates')
+            total_sugars = total_sugars + recipe.get_nutrient_values().get('sugars')
+
+
+        #score energy
+        energy_score = self.score_within_range(total_energy, self.norm_energy_score, self.max_energy_deviation, self.energy_score_weight)
         
         #print("total energy: " + str(total_energy))
         #print("energy score: " + str(energy_score))
 
+        #run calcs for fats
+        fat_score = self.score_within_range(total_fat, self.norm_fat_score, self.max_fat_deviation, self.fat_score_weight)
+        #print("total_fat: " + str(total_fat))
+        #print("fat score: " + str(fat_score))
+
+        #score protein
+        protein_score = self.score_within_range(total_protein, self.norm_protein_score, self.max_protein_deviation, self.protein_score_weight)
+
+        #score salt
+        salt_score = self.score_within_range(total_salt, self.norm_salt_score, self.max_salt_deviation, self.salt_score_weight)
+
+        #score saturates
+        saturates_score = self.score_within_range(total_saturates, self.norm_saturates_score, self.max_saturates_deviation, self.saturates_score_weight)
+        
+        #score sugars
+        sugars_score = self.score_within_range(total_sugars, self.norm_sugars_score, self.max_sugars_deviation, self.sugars_score_weight)
+
         #add in a score for the recipe
-        return preference_score + energy_score
-        #self.scores[index] = preference_score + energy_score
+        return preference_score + energy_score + fat_score + protein_score + salt_score + saturates_score + sugars_score
+
+    def score_within_range(self, value, target, threshold, multiplier):
+        if(value > target + threshold):
+            score = (value - (target + threshold)) * multiplier
+        elif(value < target - threshold):
+            score = ((target - threshold) - value) * multiplier
+        else:
+            score = 0
+        return score
 
 
 
