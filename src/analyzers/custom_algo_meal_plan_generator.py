@@ -19,6 +19,8 @@ class customAlgoMealPlanGenerator:
     pref_weight = 1 #how much preference plays into the thing
     less_than_best_offset = 1 # how much lower off the best score do we want to add to the random selection pool
 
+    recipe_repeat_weight = -1000 #how much weight a repeated recipe in a meal plan counts towards the favorablity of the system.
+
     norm_energy_score = 20000
     max_energy_deviation = 2000 #max calories off before we start taking away points from meal plan
     energy_score_weight = -1 #how much the energy score influences the score. should always be a negative number
@@ -133,6 +135,7 @@ class customAlgoMealPlanGenerator:
             total_sugars = total_sugars + recipe.get_nutrient_values().get('sugars')
 
 
+
         #score energy
         energy_score = self.score_within_range(total_energy, self.norm_energy_score, self.max_energy_deviation, self.energy_score_weight)
         
@@ -156,8 +159,21 @@ class customAlgoMealPlanGenerator:
         #score sugars
         sugars_score = self.score_within_range(total_sugars, self.norm_sugars_score, self.max_sugars_deviation, self.sugars_score_weight)
 
+        #add a score based on repeats
+        a = mealPlan[0].recipe_number
+        b = mealPlan[1].recipe_number
+        c = mealPlan[2].recipe_number
+        #2 of 3
+        if((a == b and b != c) or (b == c and a !=c ) or (a == c and b != c)):
+            repeat_score = self.recipe_repeat_weight
+        elif (a == b and b == c):
+            repeat_score = self.recipe_repeat_weight * 2
+        else:
+            repeat_score = 0
+            
+
         #add in a score for the recipe
-        return preference_score + energy_score + fat_score + protein_score + salt_score + saturates_score + sugars_score
+        return preference_score + energy_score + fat_score + protein_score + salt_score + saturates_score + sugars_score + repeat_score
 
     def score_within_range(self, value, target, threshold, multiplier):
         if(value > target + threshold):
