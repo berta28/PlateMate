@@ -50,6 +50,10 @@ class Dataset:
             data = json.load(f)
             f.close()
         dataset = pd.DataFrame(data)
+
+        #TODO remove this next section
+        #add this line to only use the first 50 values in the dataset
+        dataset = dataset[0:500]
     
         dataset["total_nutr_values"] = [{} for _ in range(len(dataset))]
         # Calculate total nutrient values
