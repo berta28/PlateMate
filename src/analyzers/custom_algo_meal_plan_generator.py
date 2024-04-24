@@ -70,7 +70,8 @@ class customAlgoMealPlanGenerator:
     def score_plans(self, plans):
         #create global varible to return the dictionary of data keyed by index of the meal plan.
         self.scores = {}
-        self.thread = 0
+        thread = 0
+        total_threads = math.ceil(len(plans)/self.max_list_size)
 
 
         #determine whether or not to run in single or multithreaded mode
@@ -83,18 +84,19 @@ class customAlgoMealPlanGenerator:
         #split the plans with each thread responsible for
             print("splitting scoring workload")
             plansList = np.array_split(plans, math.ceil(len(plans)/self.max_list_size))
-            print("preforming scoring")
-            pool = concurrent.futures.ThreadPoolExecutor(max_workers=self.max_thread_workers)
+            print("preforming scoring, starting threads")
+            pool = concurrent.futures.ProcessPoolExecutor(max_workers=self.max_thread_workers)
             for result in pool.map(self.score_plans_helper, plansList):
                 self.scores.update(result)
+                print("done with job: " + str(thread) + " of " + str(total_threads))
+                thread = thread + 1
 
 
         
         return self.scores
     
     def score_plans_helper(self, plans):
-        print("running thread: " + str(self.thread))
-        self.thread = self.thread + 1
+
         result_list = {}
         for index in range(len(plans)):
             mealList = plans[index]
