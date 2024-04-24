@@ -1,4 +1,5 @@
 from typing import List
+import random
 
 class user_input:
     def __init__(self, ingredients_list: List[str]):
@@ -17,6 +18,21 @@ class user_input:
         print(self.ingredients)
         self.get_user_allergies()
         self.get_user_preferences()
+
+    def auto_create_user(self, seed = 42):
+        random.seed(seed)
+        #generate a random length list for allergies and preferences:
+        index_list = random.sample(range(len(self.ingredients)),random.randint(0,30))
+        
+        halfway = int(len(index_list)/2)
+
+        #get allergies
+        for index in range(halfway):
+            self.allergies.append(self.ingredients[index_list[index]].lower())
+        #get preferences
+        for index in range(halfway, len(index_list)):
+            self.preferences.append(self.ingredients[index_list[index]].lower())
+
 
     #todo: add functionality to ensure that preferences cannot be allergies
     def get_user_preferences(self):
