@@ -2,9 +2,9 @@ from typing import List
 import random
 
 class user_input:
-    def __init__(self, ingredients_list: List[str]):
-        self.allergies = []
-        self.preferences = []
+    def __init__(self, ingredients_list: List[str], allergies: List[str] = [], preferences: List[str] = []):
+        self.allergies = allergies
+        self.preferences = preferences
         #would theoretically come from a list of all recipies
         self.ingredients = ingredients_list
 
