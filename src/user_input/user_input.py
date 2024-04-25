@@ -19,8 +19,7 @@ class user_input:
         self.get_user_allergies()
         self.get_user_preferences()
 
-    def auto_create_user(self, seed = 42):
-        random.seed(seed)
+    def auto_create_user(self):
         #generate a random length list for allergies and preferences:
         index_list = random.sample(range(len(self.ingredients)),random.randint(0,30))
         

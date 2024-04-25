@@ -37,7 +37,7 @@ class Dataset:
                 return meal_plan
         return None
     
-    def create_recipes_from_csv(self, file_location: str="data/recipes/full_dataset.csv"):
+    def create_recipes_from_csv(self, file_location: str="data/recipes/full_dataset.csv", num_of_entries = 300):
         recipes = []
         if not os.path.exists(file_location):
             response = requests.get('https://data.csail.mit.edu/im2recipe/recipes_with_nutritional_info.json')
@@ -53,7 +53,7 @@ class Dataset:
 
         #TODO remove this next section
         #add this line to only use the first 50 values in the dataset
-        dataset = dataset[0:600]
+        dataset = dataset[0:num_of_entries]
     
         dataset["total_nutr_values"] = [{} for _ in range(len(dataset))]
         # Calculate total nutrient values
