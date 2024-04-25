@@ -37,9 +37,10 @@ def init_database(file_location, dataset):
 
     #add in preferences
     for text in dataset.get_ingredient_names():
-        df[text + " allergy"] = []
+        df["preferences: " + text] = []
 
-    #print(df)
+    #print(len(df.columns))
+    #print(len(dataset.get_ingredient_names()))
     #save the dataframe as a csv to specified file location
     df.to_csv(file_location, index=False)
     #input("how doing")
@@ -77,7 +78,7 @@ def add_data_to_database(file_location, dataset, user: user_input, mealPlan: Mea
                 break
         array.append(add_item)
 
-    #print(array)
+    #print(len(array))
     #print(df)
     #add the array to the dataframe
     df.loc[len(df.index)] = array
