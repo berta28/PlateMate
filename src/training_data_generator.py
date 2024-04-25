@@ -101,7 +101,7 @@ def main():
     random.seed(seed_num)
 
     dataset = Dataset()
-    dataset.create_recipes_from_csv(file_location="data/recipes/full.json",num_of_entries=200)
+    dataset.create_recipes_from_csv(file_location="data/recipes/full.json", num_of_entries=recipe_num)
 
     #initialize the pandas dataframe with a column for each of the ingredients in the thing.
     init_database("data/training.csv", dataset)
