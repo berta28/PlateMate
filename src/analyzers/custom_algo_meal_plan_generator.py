@@ -59,13 +59,23 @@ class customAlgoMealPlanGenerator:
     def generate_all_plans(self):
         plans = []
         index = 0
-        #add all the recipes to the plan list as list.
-        for recipe1 in self.dataset.recipes:
-            for recipe2 in self.dataset.recipes:
-                for recipe3 in self.dataset.recipes:
+        #add all the recipes to the plan list as list. 
+        #the list of recipes is a list of the indexes to the recipes.
+        for recipe1 in range(len(self.dataset.recipes)):
+            for recipe2 in range(len(self.dataset.recipes)):
+                for recipe3 in range(len(self.dataset.recipes)):
                     plans.append(internalMealPlan(index, [recipe1, recipe2, recipe3]))
                     index = index + 1
         return plans
+    
+
+    #goes from indexes to recipes
+    def get_recipe_by_indexes(self, indexes):
+        retList = []
+        for index in indexes:
+            retList.append(self.dataset.recipes[index])
+        return retList
+
 
     def score_plans(self, plans):
         #create global varible to return the dictionary of data keyed by index of the meal plan.
@@ -106,7 +116,7 @@ class customAlgoMealPlanGenerator:
     #scores induvidual plans
     def score_plan(self, plan: internalMealPlan):
         #add points for preferences
-        mealPlan = plan.mealList
+        mealPlan = self.get_recipe_by_indexes(plan.mealList)
         index = plan.index
         #print("scoring plan: " + str(index))
         preference_score = 0
@@ -232,7 +242,7 @@ class customAlgoMealPlanGenerator:
         
         print("selecting Recipe plan")
         if amount == 1:
-            recipes = desiredPlans[random.randrange(0,len(desiredPlans))].mealList
+            recipes = self.get_recipe_by_indexes(desiredPlans[random.randrange(0,len(desiredPlans))].mealList)
             grocery_list = GroceryList().from_recipes(recipes)
             estimated_cost = grocery_list.estimated_cost
             return MealPlan(recipes, grocery_list, estimated_cost)
