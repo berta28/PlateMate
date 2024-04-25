@@ -23,7 +23,7 @@ class Ingredient:
         self.cost_per_weight = .5
 
 class Recipe:
-    def __init__(self, recipe_number=None, title=None, ingredients=None, directions=None, link=None, source=None, NER=None, total_nutrients=None):
+    def __init__(self, recipe_number=None, title=None, ingredients=None, directions=None, link=None, source=None, NER=None, total_nutrients={"energy": 0, "fat": 0, "protein": 0, "salt": 0, "saturates": 0, "sugars": 0}):
         self.recipe_number = recipe_number
         self.title = title
         self.ingredients = ingredients

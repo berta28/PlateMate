@@ -49,7 +49,7 @@ class Dataset:
         with open(file_location, 'r') as f:
             data = json.load(f)
             f.close()
-        dataset = pd.DataFrame(data)
+        dataset = pd.DataFrame(data[:3])
     
         dataset["total_nutr_values"] = [{} for _ in range(len(dataset))]
         # Calculate total nutrient values
@@ -63,11 +63,13 @@ class Dataset:
             #TODO links to ingredients
             recipe = Recipe(index, row.title, row.ingredients, row.instructions, row.url, '____', [ing['text'] for ing in row.ingredients], row.total_nutr_values)
             recipes.append(recipe)
+            #print(recipe.total_nutrients['saturates'])
 
         self.recipes = recipes
 
         #create ingredient names list
         self.ingredient_names = self.get_ingredient_names()
+        pd.DataFrame(recipes).to_csv("recipes_with_nutritional_info.csv", index=False)
 
     def filter_by_allergies(self, allergies: List[str]):
         filtered_recipes = copy.copy(self.recipes)

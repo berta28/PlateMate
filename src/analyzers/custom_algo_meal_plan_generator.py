@@ -43,14 +43,14 @@ class customAlgoMealPlanGenerator:
                             preference_score = preference_score + self.pref_weight
                             #print("found a recipe")
                 # go through all the nutrients
-                for nutrient, amount in enumerate(recipe.total_nutrients):
+                for nutrient, amount in recipe.total_nutrients.items():
                     #go through each of the ingredients in a recipe
-                    if plan_nutrients[nutrient]:
+                    if nutrient in plan_nutrients:
                         plan_nutrients[nutrient] = plan_nutrients[nutrient] + amount
 
             nutrient_score = 0
-            for nutrient, amount in enumerate(plan_nutrients):
-                #go through each of the ingredients in a recipe
+            for nutrient, amount in plan_nutrients.items():
+                #go through the total nutrients in a meal plan and score it based on how close it is to the recommended amount
                 if nutrient == "energy":
                     ideal = 2000
                 elif nutrient == "fat":
@@ -58,13 +58,12 @@ class customAlgoMealPlanGenerator:
                 elif nutrient == "protein":
                     ideal = 50
                 elif nutrient == "salt":
-                    ideal = 2.3
+                    ideal = 2
                 elif nutrient == "saturates":
                     ideal = 20
                 elif nutrient == "sugars":
                     ideal = 50
-                nutrient_score = nutrient_score + max(0, ((-(amount-ideal)^2)+ideal^2)/(ideal^2)) #this is a parabola that is 0 at amount=0, 1 at amount=ideal, and 0 at amount=2*ideal
-            
+                nutrient_score = nutrient_score + max(0, (((-(amount-ideal)**2)+ideal**2)/(ideal**2))) #this is a parabola that is 0 at amount=0, goes up to 1 at amount=ideal, and falls back to 0 at amount=2*ideal
             #add in a score for the recipe
             scores.append(0 + preference_score + nutrient_score)
         return scores
