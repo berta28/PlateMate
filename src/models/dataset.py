@@ -61,7 +61,7 @@ class Dataset:
 
         for index, row in dataset.iterrows():
             #TODO links to ingredients
-            recipe = Recipe(index, row.title, row.ingredients, row.instructions, row.url, '____', [ing['text'] for ing in row.ingredients])
+            recipe = Recipe(index, row.title, row.ingredients, row.instructions, row.url, '____', [ing['text'] for ing in row.ingredients], row.total_nutr_values)
             recipes.append(recipe)
 
         self.recipes = recipes

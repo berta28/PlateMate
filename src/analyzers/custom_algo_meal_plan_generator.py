@@ -30,6 +30,8 @@ class customAlgoMealPlanGenerator:
     def score_plans(self, plans):
         scores = []
         for mealPlan in plans:
+            plan_nutrients = {"energy": 0, "fat": 0, "protein": 0, "salt": 0, "saturates": 0, "sugars": 0}
+
             #add points for preferences
             preference_score = 0
             for recipe in mealPlan:
@@ -40,10 +42,31 @@ class customAlgoMealPlanGenerator:
                         if ingredient.lower() == preference.lower():
                             preference_score = preference_score + self.pref_weight
                             #print("found a recipe")
+                # go through all the nutrients
+                for nutrient, amount in enumerate(recipe.total_nutrients):
+                    #go through each of the ingredients in a recipe
+                    if plan_nutrients[nutrient]:
+                        plan_nutrients[nutrient] = plan_nutrients[nutrient] + amount
 
+            nutrient_score = 0
+            for nutrient, amount in enumerate(plan_nutrients):
+                #go through each of the ingredients in a recipe
+                if nutrient == "energy":
+                    ideal = 2000
+                elif nutrient == "fat":
+                    ideal = 78
+                elif nutrient == "protein":
+                    ideal = 50
+                elif nutrient == "salt":
+                    ideal = 2.3
+                elif nutrient == "saturates":
+                    ideal = 20
+                elif nutrient == "sugars":
+                    ideal = 50
+                nutrient_score = nutrient_score + max(0, ((-(amount-ideal)^2)+ideal^2)/(ideal^2)) #this is a parabola that is 0 at amount=0, 1 at amount=ideal, and 0 at amount=2*ideal
             
             #add in a score for the recipe
-            scores.append(0 + preference_score)
+            scores.append(0 + preference_score + nutrient_score)
         return scores
 
 
@@ -92,19 +115,3 @@ class customAlgoMealPlanGenerator:
             grocery_list = GroceryList().from_recipes(recipes)
             estimated_cost = grocery_list.estimated_cost
             return MealPlan(recipes, grocery_list, estimated_cost)
-            
-
-
-
-        
-
-
-
-
-    
-
-
-        
-
-
-    

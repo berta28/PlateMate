@@ -23,13 +23,14 @@ class Ingredient:
         self.cost_per_weight = .5
 
 class Recipe:
-    def __init__(self, recipe_number=None, title=None, ingredients=None, directions=None, link=None, source=None, NER=None):
+    def __init__(self, recipe_number=None, title=None, ingredients=None, directions=None, link=None, source=None, NER=None, total_nutrients=None):
         self.recipe_number = recipe_number
         self.title = title
         self.ingredients = ingredients
         self.directions = directions
         self.link = link
         self.source = source
+        self.total_nutrients = total_nutrients
         # NER values contain better information about the ingredients then ingredients list
         #ingredients list contains measure values.
         #TODO find way to better exact measure values
