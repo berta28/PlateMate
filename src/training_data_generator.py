@@ -9,8 +9,8 @@ import random
 
 #parameters to set for training
 seed_num = 42
-recipe_num = 300
-num_of_datapoints = 20
+recipe_num = 100
+num_of_datapoints = 50
 
 def get_user_inputs():
     calorie_limit = input("Enter your calorie limit: ")
