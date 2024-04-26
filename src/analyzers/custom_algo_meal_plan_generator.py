@@ -247,6 +247,9 @@ class customAlgoMealPlanGenerator:
             grocery_list = GroceryList().from_recipes(recipes)
             estimated_cost = grocery_list.estimated_cost
             return MealPlan(recipes, grocery_list, estimated_cost)
+        if amount == -1:
+            #to get a single days meal plan as its index range
+            return desiredPlans[random.randrange(0,len(desiredPlans))].mealList
         
 
             
