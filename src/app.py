@@ -46,7 +46,27 @@ def main():
     print(meal_plan.get_recipe_names())
     print("Grocery List:")
     print(meal_plan.grocery_list.get_ingredients())
-    print("Estimated Cost: $", meal_plan.estimated_cost)
+    #print("Estimated Cost: $", meal_plan.estimated_cost)
+    print_total_nutrients(meal_plan)
+
+
+def print_total_nutrients(meal_plan):
+    #sum nutritional values
+    total_energy = 0
+    total_fat = 0
+    total_protein = 0
+    total_salt = 0
+    total_saturates = 0
+    total_sugars = 0
+    for recipe in meal_plan.recipes:
+        total_energy = total_energy + recipe.get_nutrient_values().get('energy')
+        total_fat = total_fat + recipe.get_nutrient_values().get('fat')
+        total_protein = total_protein + recipe.get_nutrient_values().get('protein')
+        total_salt = total_salt + recipe.get_nutrient_values().get('salt')
+        total_saturates = total_saturates + recipe.get_nutrient_values().get('saturates')
+        total_sugars = total_sugars + recipe.get_nutrient_values().get('sugars')
+    print("Meal Plan Total Nutritional Values:")
+    print({'calories': total_energy, 'fat': total_fat, 'protein': total_protein, 'salt': total_salt, 'saturates': total_saturates, 'sugars': total_sugars})
 
 if __name__ == "__main__":
     main()

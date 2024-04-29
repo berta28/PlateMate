@@ -21,11 +21,11 @@ class customAlgoMealPlanGenerator:
 
     recipe_repeat_weight = -1000 #how much weight a repeated recipe in a meal plan counts towards the favorablity of the system.
 
-    norm_energy_score = 20000
-    max_energy_deviation = 2000 #max calories off before we start taking away points from meal plan
+    norm_energy_score = 2000
+    max_energy_deviation = 200 #max calories off before we start taking away points from meal plan
     energy_score_weight = -1 #how much the energy score influences the score. should always be a negative number
 
-    norm_fat_score = 300
+    norm_fat_score = 78
     max_fat_deviation = 20
     fat_score_weight = -0.5
 
