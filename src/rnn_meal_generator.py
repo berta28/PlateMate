@@ -34,6 +34,9 @@ def train_rnn(features, targets):
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
+    # Convert targets to a tensor with a single dimension
+    targets = torch.tensor(targets, dtype=torch.float32)
+
     # Train the RNN model
     for epoch in range(num_epochs):
         optimizer.zero_grad()
@@ -81,10 +84,18 @@ def main():
     # Train the RNN model
     model = train_rnn(features, targets)
     
-    # Predict the next meal plan
-    predictions = model(features)
-    next_meal_plan = predictions.argmax(dim=1)
-    print("Next Meal Plan:", next_meal_plan)
+    # Save the model
+    torch.save(model.state_dict(), 'rnn_model.pth')
+    
+    #make predictions
+    model.eval()
+    with torch.no_grad():
+        test_input = torch.tensor(features,dtype=torch.float32)
+        predictions = model(test_input)
+        print(predictions)
+
+
+
 
 
 
