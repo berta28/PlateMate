@@ -25,8 +25,8 @@ def main():
 
     #get the user
     user = user_input(dataset.get_ingredient_names())
-    #user.get_user_inputs()
-    user.auto_create_user()
+    user.get_user_inputs()
+    #user.auto_create_user()
 
     #print out the inputs from the user
     print(user.allergies)

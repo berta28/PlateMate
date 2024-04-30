@@ -16,8 +16,8 @@ class customAlgoMealPlanGenerator:
     max_thread_workers = 24 #number of threads to spawn during multithreaded processies
     max_list_size = 100000 #length of lists before splitting
 
-    pref_weight = 1 #how much preference plays into the thing
-    less_than_best_offset = 1 # how much lower off the best score do we want to add to the random selection pool
+    pref_weight = 1000 #how much preference plays into the thing
+    less_than_best_offset = 0.1 # how much lower off the best score do we want to add to the random selection pool
 
     recipe_repeat_weight = -1000 #how much weight a repeated recipe in a meal plan counts towards the favorablity of the system.
 
