@@ -8,7 +8,8 @@ class training_data_extractor():
         #intialize the thing
         self.params = params
         self.data_location = data
-
+        self.dataset = self.get_dataset()
+        self.df = pd.read_csv(self.data_location)
     #get the user and the meal plan that was selected for that user
     def get_user_and_meal_plan(self, index: int = 0):
         mealList = []
@@ -16,8 +17,8 @@ class training_data_extractor():
         preferences = []
 
         #get the dataframe with the training data
+        
         df = pd.read_csv(self.data_location)
-
         #get the list of all the column headings
         columns_name = list(df.columns.values)
         #print(columns)
@@ -49,7 +50,7 @@ class training_data_extractor():
         #print(preferences)
         #get recipes as objects
         recipes = []
-        dataset = self.get_dataset()
+        dataset = self.dataset
         recipes.append(dataset.get_recipe_by_title(mealList[0]))
         recipes.append(dataset.get_recipe_by_title(mealList[1]))
         recipes.append(dataset.get_recipe_by_title(mealList[2]))
@@ -82,15 +83,15 @@ class training_data_extractor():
 
         
 
-if __name__ == "__main__":
-    #retrieve the user and mealPlan at index 0
-    tde = training_data_extractor()
-    user, meal_plan = tde.get_user_and_meal_plan(1)
-    print("allergies: " + str(user.allergies))
-    print("preferences: " + str(user.preferences))
+# if __name__ == "__main__":
+    # #retrieve the user and mealPlan at index 0
+    # tde = training_data_extractor()
+    # user, meal_plan = tde.get_user_and_meal_plan(1)
+    # print("allergies: " + str(user.allergies))
+    # print("preferences: " + str(user.preferences))
 
-    print("Meal Plan:")
-    print(meal_plan.get_recipe_names())
-    print("Grocery List:")
-    print(meal_plan.grocery_list.get_ingredients())
-    print("Estimated Cost: $", meal_plan.estimated_cost)
+    # print("Meal Plan:")
+    # print(meal_plan.get_recipe_names())
+    # print("Grocery List:")
+    # print(meal_plan.grocery_list.get_ingredients())
+    # print("Estimated Cost: $", meal_plan.estimated_cost)
