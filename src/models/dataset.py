@@ -97,7 +97,7 @@ class Dataset:
     def get_num_categories(self):
         return len(self.ingredient_names)
     
-    def preprocess_data(self,encoder = OneHotEncoder(sparse=False),scaler = MinMaxScaler()):
+    def preprocess_data(self,encoder = OneHotEncoder(),scaler = MinMaxScaler()):
         encoded_ingredients = encoder.fit_transform([[ingredient] for recipe in self.recipes for ingredient in recipe.NER])
         # Convert preprocessed data to numpy array
         return np.array(encoded_ingredients)

@@ -1,9 +1,9 @@
-from models.dataset_EOCG import Dataset
+
+from models.dataset_knapsack import Dataset
 from analyzers.knapsack_meal_plan_generator import EOCGMealPlanGenerator
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
 def main():
     
