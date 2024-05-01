@@ -39,7 +39,7 @@ class Recipe:
     def get_nutrient_values(self):
         return self.nutrient_values
 
-    def to_numerical_representation(self, encoder=OneHotEncoder(sparse=False), scaler=MinMaxScaler()):
+    def to_numerical_representation(self, encoder=OneHotEncoder(), scaler=MinMaxScaler()):
         # One-hot encode ingredients
         encoded_ingredients = encoder.transform([[ingredient] for ingredient in self.NER])
         # Normalize calories
