@@ -2,7 +2,7 @@ import json
 import os
 import requests
 
-class Dataset:
+class Dataset_knapsack:
     def __init__(self):
         self.recipes = []
 

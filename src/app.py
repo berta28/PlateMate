@@ -2,7 +2,7 @@ from models.meal_plan import MealPlan
 from models.dataset import Dataset
 from analyzers import random_meal_plan_generator, custom_algo_meal_plan_generator
 from user_input.user_input import user_input
-from models.dataset_knapsack import Dataset
+from models.dataset_knapsack import Dataset_knapsack
 from analyzers.knapsack_meal_plan_generator import EOCGMealPlanGenerator
 import os
 import sys
@@ -63,7 +63,7 @@ def main():
         'preferences': [preference.strip().lower() for preference in preferences]
     }
 
-    dataset_knapsack = Dataset()
+    dataset_knapsack = Dataset_knapsack()
     dataset_knapsack.create_recipes_from_csv(file_location="E:/WPI/AI/GroupProject/PlateMate/data/recipes_with_nutritional_info.json", num_of_entries=10000)
 
     nutritional_limits_per_meal = {
