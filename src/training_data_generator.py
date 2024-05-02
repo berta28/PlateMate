@@ -9,7 +9,7 @@ import random
 
 #parameters to set for training
 seed_num = 42
-recipe_num = 100
+recipe_num = 10000
 num_of_datapoints = 50
 
 def get_user_inputs():

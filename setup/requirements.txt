@@ -1,1 +1,8 @@
 pandas
+pulp
+pytorch
+scikit-learn
+scipy
+seaborn
+numpy
+matplotlib

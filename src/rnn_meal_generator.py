@@ -22,6 +22,10 @@ from user_input.user_input import user_input
 class RNNMealGenerator:
     def __init__(self):
         self.df = pd.read_csv("data/test_data.csv")
+        self.model = torch.load("rnn_model.pth")
+        self.dataset = Dataset()
+        self.dataset.create_recipes_from_csv(file_location="data/recipes/full.json")
+        
 
     def train_rnn(self, features, targets):
         # Convert features and targets to tensors
@@ -62,9 +66,7 @@ class RNNMealGenerator:
         return model
 
     def convert_input_to_tensor(self, user):
-        dataset = Dataset()
-        dataset.create_recipes_from_csv(file_location="data/recipes/full.json")
-        ingredient_list = dataset.get_ingredient_names()
+        ingredient_list = self.dataset.get_ingredient_names()
         features = []
         feature = np.zeros(len(ingredient_list))
         for ingredient in user.preferences:
@@ -77,12 +79,10 @@ class RNNMealGenerator:
         return torch.tensor(features, dtype=torch.float32)
 
     def create_model(self):
-        rnn_meal_generator = RNNMealGenerator()
 
         # retrieve the user and mealPlan at index 0
         tde = retrieve_training_data.training_data_extractor()
-        self.dataset = Dataset()
-        self.dataset.create_recipes_from_csv(file_location="data/recipes/full.json")
+        
         ingredient_list = self.dataset.get_ingredient_names()
 
         # Define variables
@@ -156,9 +156,9 @@ class RNNMealGenerator:
 
 if __name__ == "__main__":
     rnn_meal_generator = RNNMealGenerator()
-    rnn_meal_generator.create_model()
+    # rnn_meal_generator.create_model()
     user = user_input(rnn_meal_generator.dataset.get_ingredient_names())
-    input = rnn_meal_generator.convert_input_to_tensor(user)
+    user.auto_create_user()
     p = rnn_meal_generator.predict(user)
     customAlgoMealPlanGenerator = (
         custom_algo_meal_plan_generator.customAlgoMealPlanGenerator(

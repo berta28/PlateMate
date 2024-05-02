@@ -1,6 +1,7 @@
 from models.meal_plan import MealPlan
 from models.dataset import Dataset
 from analyzers import random_meal_plan_generator, custom_algo_meal_plan_generator
+from rnn_meal_generator import RNNMealGenerator
 from user_input.user_input import user_input
 from models.dataset_knapsack import Dataset_knapsack
 from analyzers.knapsack_meal_plan_generator import EOCGMealPlanGenerator
@@ -26,16 +27,16 @@ def main():
     # preprocess data
 
     dataset = Dataset()
-    dataset.create_recipes_from_csv(file_location="data/recipes/full.json", num_of_entries=10000)
+    dataset.create_recipes_from_csv(file_location="data/recipes/full.json", num_of_entries=1000)
 
     #get the user
     user = user_input(dataset.get_ingredient_names())
-    user.get_user_inputs()
-    #user.auto_create_user()
+    # user.get_user_inputs()
+    user.auto_create_user()
 
     #print out the inputs from the user
     print(user.allergies)
-    print(user.preferences)
+    print(user.allergies)
 
     analyzer = custom_algo_meal_plan_generator.customAlgoMealPlanGenerator(dataset, user)
 
@@ -54,9 +55,9 @@ def main():
     print_total_nutrients(meal_plan)
     
     print("Input allergies:")
-    allergies = input().split(',')
+    allergies = user.allergies
     print("Input preference:")
-    preferences = input().split(',')
+    preferences = user.allergies
 
     user_knapsack = {
         'allergies': [allergy.strip().lower() for allergy in allergies],
@@ -64,7 +65,7 @@ def main():
     }
 
     dataset_knapsack = Dataset_knapsack()
-    dataset_knapsack.create_recipes_from_csv(file_location="E:/WPI/AI/GroupProject/PlateMate/data/recipes_with_nutritional_info.json", num_of_entries=10000)
+    dataset_knapsack.create_recipes_from_csv(file_location="./data/recipes_with_nutritional_info.json", num_of_entries=10000)
 
     nutritional_limits_per_meal = {
         'breakfast': {'energy': 500, 'fat': 20, 'protein': 15, 'salt': 0.7, 'saturates': 5, 'sugars': 15},
@@ -77,6 +78,14 @@ def main():
         print("No optimal meal plan found.")
     else:
         knapsack_generator.display_meal_plan_details(knapsack_meal_plan)
+
+
+    rnn_meal_generator = RNNMealGenerator()
+    input = rnn_meal_generator.convert_input_to_tensor(user)
+    p = rnn_meal_generator.predict(user)
+    meal_plan = custom_algo_meal_plan_generator.internalMealPlan(index=0, mealList=p)
+    score = analyzer.score_plan(meal_plan)
+    print("Meal Plan Score: " + str(score))
 
 def print_total_nutrients(meal_plan):
     #sum nutritional values
